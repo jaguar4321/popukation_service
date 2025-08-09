@@ -25,7 +25,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DB_URL=postgresql+psycopg2://postgres:postgres@db:5432/population_db
+      - DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/population_db
+      - DATA_SOURCE=wikipedia  #  'statisticstimes'
 
   print_data:
     build:

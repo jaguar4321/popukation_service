@@ -1,27 +1,43 @@
 import os
-from sqlalchemy.orm import Session
-from app.database import SessionLocal
+import asyncio
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func, select
+from app.database import AsyncSessionLocal
 from app.models import Country
-from sqlalchemy import func
 
 class DataPrinter:
     def __init__(self, db_url):
         self.db_url = db_url
         os.environ["DB_URL"] = db_url
 
-    def print_data(self):
-        with SessionLocal() as session:
-            results = session.query(
-                Country.region,
-                func.sum(Country.population).label("total_population"),
-                func.max(Country.population).label("max_population"),
-                func.min(Country.population).label("min_population")
-            ).group_by(Country.region).all()
+    async def print_data(self):
+        async with AsyncSessionLocal() as session:
+            stmt = (
+                select(
+                    Country.region,
+                    func.sum(Country.population).label("total_population"),
+                    func.max(Country.population).label("max_population"),
+                    func.min(Country.population).label("min_population")
+                )
+                .group_by(Country.region)
+            )
+            results = (await session.execute(stmt)).all()
 
             for region, total_pop, max_pop, min_pop in results:
-                max_country = session.query(Country).filter_by(region=region).order_by(
-                    Country.population.desc()).first()
-                min_country = session.query(Country).filter_by(region=region).order_by(Country.population.asc()).first()
+                max_stmt = (
+                    select(Country)
+                    .filter_by(region=region)
+                    .order_by(Country.population.desc())
+                )
+                max_country = (await session.execute(max_stmt)).scalars().first()
+
+                min_stmt = (
+                    select(Country)
+                    .filter_by(region=region)
+                    .order_by(Country.population.asc())
+                )
+                min_country = (await session.execute(min_stmt)).scalars().first()
+
                 print(f"Назва регіону: {region}")
                 print(f"Загальне населення регіону: {total_pop}")
                 print(f"Назва найбільшої країни в регіоні: {max_country.country}")
@@ -30,7 +46,10 @@ class DataPrinter:
                 print(f"Населення найменшої країни в регіоні: {min_country.population}")
                 print()
 
-if __name__ == "__main__":
-    db_url = os.getenv("DB_URL", "postgresql+psycopg2://postgres:postgres@db:5432/population_db")
+async def main():
+    db_url = os.getenv("DB_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/population_db")
     printer = DataPrinter(db_url)
-    printer.print_data()
+    await printer.print_data()
+
+if __name__ == "__main__":
+    asyncio.run(main())

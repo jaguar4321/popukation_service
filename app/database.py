@@ -1,18 +1,17 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 Base = declarative_base()
 
 def get_engine():
-    db_url = "postgresql+psycopg2://postgres:postgres@db:5432/population_db"
-    # db_url = "postgresql+psycopg2://postgres:jaguar@localhost:5432/population_db"
-
-
-    return create_engine(db_url)
+    db_url = "postgresql+asyncpg://postgres:postgres@db:5432/population_db"
+    # db_url = "postgresql+asyncpg://postgres:jaguar@localhost:5432/population_db"
+    return create_async_engine(db_url)
 
 engine = get_engine()
-SessionLocal = sessionmaker(bind=engine)
+AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
-def init_db():
-    Base.metadata.create_all(engine)
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
