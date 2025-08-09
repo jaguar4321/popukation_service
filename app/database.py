@@ -5,10 +5,10 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 Base = declarative_base()
 
 def get_engine():
-    db_url = os.getenv(
-        "DB_URL",
-        "postgresql+psycopg2://postgres:jaguar@localhost:5432/population_db"
-    )
+    db_url = "postgresql+psycopg2://postgres:postgres@db:5432/population_db"
+
+    # "postgresql+psycopg2://postgres:jaguar@localhost:5432/population_db"
+
     return create_engine(db_url)
 
 engine = get_engine()
