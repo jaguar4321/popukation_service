@@ -5,7 +5,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: jaguar
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: population_db
     ports:
       - "5432:5432"
@@ -25,7 +25,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DB_URL=postgresql+psycopg2://postgres:jaguar@db:5432/population_db
+      - DB_URL=postgresql+psycopg2://postgres:postgres@db:5432/population_db
 
   print_data:
     build:
@@ -35,7 +35,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DB_URL=postgresql+psycopg2://postgres:jaguar@db:5432/population_db
+      - DB_URL=postgresql+psycopg2://postgres:postgres@db:5432/population_db
 
 volumes:
   postgres_data:

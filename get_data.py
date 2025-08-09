@@ -14,12 +14,12 @@ class DataLoader:
             parser = WikipediaParser()
             data = parser.fetch_data()
             for _, row in data.iterrows():
-                country = Country(country=row["country"], population=row["population"])
+                country = Country(country=row["country"], population=row["population"], region=row["region"])
                 session.add(country)
             session.commit()
         print("✅ Данные сохранены в БД")
 
 if __name__ == "__main__":
-    db_url = os.getenv("DB_URL", "postgresql+psycopg2://postgres:jaguar@db:5432/population_db")
+    db_url = os.getenv("DB_URL", "postgresql+psycopg2://postgres:postgres@db:5432/population_db")
     loader = DataLoader(db_url)
     loader.load_data()
