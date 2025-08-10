@@ -26,7 +26,7 @@ services:
         condition: service_healthy
     environment:
       - DB_URL=postgresql+asyncpg://postgres:postgres@db:5432/population_db
-      - DATA_SOURCE=wikipedia  #  'statisticstimes'
+      - DATA_SOURCE=statisticstimes  #  'wikipedia'
 
   print_data:
     build:
