@@ -47,7 +47,7 @@ class PopulationParser:
         return df
 
     def _clean_statisticstimes_data(self, df):
-        print("Raw DataFrame columns:", df.columns)
+        print("statisticstimes")
 
         if isinstance(df.columns, pd.MultiIndex):
             population_2024 = df['Population']['2024']
