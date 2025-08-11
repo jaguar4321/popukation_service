@@ -6,7 +6,7 @@ Base = declarative_base()
 
 def get_engine():
     db_url = "postgresql+asyncpg://postgres:postgres@db:5432/population_db"
-    # db_url = "postgresql+asyncpg://postgres:jaguar@localhost:5432/population_db"
+
     return create_async_engine(db_url)
 
 engine = get_engine()

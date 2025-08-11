@@ -1,7 +1,7 @@
 import os
 import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select
+from sqlalchemy import func, select, delete
 from app.database import AsyncSessionLocal
 from app.models import Country
 
@@ -45,6 +45,10 @@ class DataPrinter:
                 print(f"Назва найменшої країни в регіоні: {min_country.country}")
                 print(f"Населення найменшої країни в регіоні: {min_country.population}")
                 print()
+
+            await session.execute(delete(Country))
+            await session.commit()
+            print("🗑 База даних очищена")
 
 async def main():
     db_url = os.getenv("DB_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/population_db")
